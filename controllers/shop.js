@@ -1,40 +1,49 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const { where } = require('sequelize');
 
 exports.getProducts = (req, res, next) => {
-   Product.fetchAll()
- .then(([rows , fileData])=>{
-  res.render('shop/index' , {
-    prods : rows,
-    pageTitle :'Shop',
-    path : '/'
-  })
- } )
- .catch(err=>console.log(err.message))
+  Product.findAll()
+  .then((prodcuts)=>{
+   res.render('shop/product-list' , {
+     prods : prodcuts,
+     pageTitle :'products',
+     path : '/products'
+   })
+  }).catch(err=>console.log(err));
+ 
+   
+  
 };
 
 exports.getProduct = (req, res, next) => {
   const prodId = req.params.productId;
-  Product.findById(prodId).then(([product])=>{
-    res.render('shop/product-detail', {
-      product: product[0],
-      pageTitle: product.title,
-      path: '/products'
-    });
-  }).catch(err=>console.log(err));
+  Product.findAll({where : {id : prodId}}).then((product)=>{
+      res.render('shop/product-detail', {
+        product: product[0],
+        pageTitle: product.title,
+        path: '/products'
+      })}).catch(err=>console.log(err))
+  // Product.findByPk(prodId).then((product)=>{
+  //   res.render('shop/product-detail', {
+  //     product: product,
+  //     pageTitle: product.title,
+  //     path: '/products'
+  //   });
+  // }).catch(err=>console.log(err));
 };
-
 exports.getIndex = (req, res, next) => {
- Product.fetchAll()
- .then(([rows , fileData])=>{
+ Product.findAll()
+ .then((prodcuts)=>{
   res.render('shop/index' , {
-    prods : rows,
+    prods : prodcuts,
     pageTitle :'Shop',
     path : '/'
   })
- } )
- .catch(err=>console.log(err.message))
-};
+ }).catch(err=>console.log(err));
+
+  
+ } 
 
 exports.getCart = (req, res, next) => {
   res.render('shop/cart', {
